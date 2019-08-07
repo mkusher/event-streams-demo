@@ -33,7 +33,7 @@ const Title = styled.h1`
 `;
 const Code = styled.pre`
   background-color: grey;
-  width: 50vw;
+  width: 70vw;
   min-height: 70vh;
   margin: 0 auto;
   font-size: 5vh;
@@ -55,6 +55,8 @@ const reduxQuestionCode = `
 (state, action) => {
   // return new state here
 }
+
+store = actions + reduced state
 `;
 const promisesCode = `
 const all = Promise.all([
@@ -68,11 +70,35 @@ const first = Promise.race([
   p3
 ])
 `;
-const reduxImpl = `
-scan(
+const eventEmitterCode = `
+const myEmitter = new MyEmitter();
+myEmitter.on('event', (a, b) => {
+  console.log(a, b, this);
+  // Prints: a b {}
+});
+myEmitter.emit('event', 'a', 'b');
+`;
+const reduxEmitterCode = `
+let state = initialState
+const emitter = new Emitter()
+const dispatch = emitter.emit
+  .bind(emitter, "action")
+emitter.on("action", action => {
+  state = reducer(state, action)
+})
+`;
+const reduxStreamsCode = `
+const [dispatch, actions]
+  = createAdapter()
+const stateStream = scan(
   reducer,
   initialState,
-  actionsStream
+  actions
+)
+let state = initialState
+tap(
+  newState => (state = newState),
+  stateStream
 )
 `;
 
@@ -94,12 +120,16 @@ const App = () => (
       <Code>{promisesCode}</Code>
     </Screen>
     <Screen>
-      <Title>Event emitter</Title>
-      <Code>{firstClassCitCode}</Code>
-    </Screen>
-    <Screen>
       <Title>Redux?</Title>
       <Code>{reduxQuestionCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Event emitter</Title>
+      <Code>{eventEmitterCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Redux with event emitter</Title>
+      <Code>{reduxEmitterCode}</Code>
     </Screen>
     <Screen>
       <Title>Simple counter</Title>
@@ -117,8 +147,8 @@ const App = () => (
       <StreamDragDrop />
     </Screen>
     <Screen>
-      <Title>Redux?</Title>
-      <Code>{reduxImpl}</Code>
+      <Title>Redux with streams</Title>
+      <Code>{reduxStreamsCode}</Code>
     </Screen>
   </Container>
 );

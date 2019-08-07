@@ -61,10 +61,10 @@ const beginDrag = (e: MouseDown) => map(moveToCoords(delta(e)), mouseMoves);
 
 const endDrag = (e: MouseUp) => now(moveToCoords(delta(e))(e));
 
-export const makeDraggable = () => {
+export const makeDraggable = (initialPosition: { x: number; y: number }) => {
   const drag = map(beginDrag, mouseDown);
   const drop = map(endDrag, mouseUp);
-  return startWith({ x: 200, y: 100 }, switchLatest(merge(drag, drop)));
+  return startWith(initialPosition, switchLatest(merge(drag, drop)));
 };
 
 const count = (result: number, a: unknown) => result + 1;
@@ -89,7 +89,7 @@ export const Ticks = renderReactNodeStream(
 
 export const StreamDragDrop = () => (
   <Area onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
-    <FromStream stream={makeDraggable()}>
+    <FromStream stream={makeDraggable({ x: 200, y: 100 })}>
       {coords => (
         <ItemToDrag onMouseDown={onMouseDown} left={coords.x} top={coords.y} />
       )}
