@@ -56,7 +56,12 @@ const reduxQuestionCode = `
   // return new state here
 }
 
-store = actions + reduced state
+type Dispatch =
+  (action: Action) => void
+type Subscribe =
+  (f: (state: State) => void) => void
+// example
+subscribe(state => console.log(state))
 `;
 const promisesCode = `
 const all = Promise.all([
@@ -81,11 +86,14 @@ myEmitter.emit('event', 'a', 'b');
 const reduxEmitterCode = `
 let state = initialState
 const emitter = new Emitter()
-const dispatch = emitter.emit
-  .bind(emitter, "action")
 emitter.on("action", action => {
   state = reducer(state, action)
+  emitter.emit("state", state)
 })
+const dispatch = emitter.emit
+  .bind(emitter, "action")
+const subscribe = emitter.emit
+  .bind(emitter, "state")
 `;
 const reduxStreamsCode = `
 const [dispatch, actions]
@@ -95,9 +103,8 @@ const stateStream = scan(
   initialState,
   actions
 )
-let state = initialState
-tap(
-  newState => (state = newState),
+const subscribe = f => tap(
+  f,
   stateStream
 )
 `;
