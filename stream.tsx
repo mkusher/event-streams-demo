@@ -21,7 +21,7 @@ export class FromStream<A> extends React.Component<
   };
   effect = runEffects(tap(this.setValue, this.props.stream), scheduler);
   render() {
-    if (!this.state.value) {
+    if (this.state.value === null) {
       return null;
     }
     return this.props.children(this.state.value);

@@ -1,21 +1,10 @@
 import React from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
-import { createAdapter } from "@most/adapter";
-import {
-  tap,
-  runEffects,
-  map,
-  periodic,
-  scan,
-  sample,
-  chain,
-  startWith,
-  now,
-  switchLatest,
-  merge
-} from "@most/core";
-import { renderReactNodeStream, FromStream } from "./stream";
+import { Ticks, StreamDragDrop } from "./drag-n-drop";
+import randomColor from "randomcolor";
+import { Counter } from "./counter";
+import { ClockCounter } from "./clock-counter";
 
 const Header = styled.header`
   border-bottom: 1px solid #000;
@@ -23,87 +12,114 @@ const Header = styled.header`
   width: 100vw;
   overflow: hidden;
 `;
-const Area = styled.div`
-  position: relative;
-  height: 90vh;
-  width: 100vw;
-`;
-const ItemToDrag = styled.div`
-  width: 5vh;
-  height: 5vh;
-  border: 2px solid yellow;
-  position: absolute;
-  ${(props: { left: number; top: number }) => `
-  left: ${props.left}px;
-  top: ${props.top}px;
-  `};
-`;
 const Container = styled.main`
+  display: flex;
+  flex-direction: column;
   margin: 0;
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
 `;
-type MouseMove = React.MouseEvent<HTMLDivElement, MouseEvent>;
-const [onMouseMove, mouseMoves] = createAdapter<MouseMove>();
-type MouseDown = MouseMove;
-const [onMouseDown, mouseDown] = createAdapter<MouseDown>();
-type MouseUp = MouseMove;
-const [onMouseUp, mouseUp] = createAdapter<MouseUp>();
-
-const eventToCoords = (e: MouseMove) => ({
-  x: e.clientX,
-  y: e.clientY
-});
-
-const beginDrag = (e: MouseDown) =>
-  startWith(eventToCoords(e), map(eventToCoords, mouseMoves));
-
-const endDrag = (e: MouseUp) => now(eventToCoords(e));
-
-const makeDraggable = () => {
-  const drag = map(beginDrag, mouseDown);
-  const drop = map(endDrag, mouseUp);
-  return startWith({ x: 200, y: 100 }, switchLatest(merge(drag, drop)));
-};
-
-const clock = periodic(500);
-const count = (result: number, a: unknown) => result + 1;
-const mouseMovesNumber = chain(() => scan(count, 0, mouseMoves), clock);
-const Tick = styled.div`
-  display: inline-block;
-  padding: 3px;
+const Screen = styled.section`
+  width: 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  overflow: hidden;
+  ${() => `background-color: ${randomColor({ luminosity: "light" })};`};
 `;
-const Ticks = renderReactNodeStream(
-  map(
-    moves => (
-      <>
-        {moves.map(i => (
-          <Tick>{i}</Tick>
-        ))}
-      </>
-    ),
-    scan(
-      (result, movesNumber) => [movesNumber, ...result],
-      [] as number[],
-      sample(mouseMovesNumber, clock)
-    )
-  )
-);
+const Title = styled.h1`
+  text-align: center;
+  font-size: 8vh;
+`;
+const Code = styled.pre`
+  background-color: grey;
+  width: 50vw;
+  min-height: 70vh;
+  margin: 0 auto;
+  font-size: 5vh;
+  color: white;
+  overflow: scroll;
+`;
+
+const firstClassCitCode = `
+  const a = f()
+  const b = g(a)
+  const c = h(g)(b)(f)(a)
+`;
+const proceduralEventsCode = `
+function onEvent(e) {
+  // process it here
+}
+`;
+const reduxQuestionCode = `
+(state, action) => {
+  // return new state here
+}
+`;
+const promisesCode = `
+const all = Promise.all([
+  p1,
+  p2,
+  p3
+])
+const first = Promise.race([
+  p1,
+  p2,
+  p3
+])
+`;
+const reduxImpl = `
+scan(
+  reducer,
+  initialState,
+  actionsStream
+)
+`;
 
 const App = () => (
-  <Container onMouseUp={onMouseUp}>
-    <Header>
-      <Ticks />
-    </Header>
-    <Area onMouseMove={onMouseMove}>
-      <FromStream stream={makeDraggable()}>
-        {coords => (
-          <ItemToDrag
-            onMouseDown={onMouseDown}
-            left={coords.x}
-            top={coords.y}
-          />
-        )}
-      </FromStream>
-    </Area>
+  <Container>
+    <Screen>
+      <Title>About event streams</Title>
+    </Screen>
+    <Screen>
+      <Title>Procedural event handling</Title>
+      <Code>{proceduralEventsCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>First class citizen</Title>
+      <Code>{firstClassCitCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Promises</Title>
+      <Code>{promisesCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Event emitter</Title>
+      <Code>{firstClassCitCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Redux?</Title>
+      <Code>{reduxQuestionCode}</Code>
+    </Screen>
+    <Screen>
+      <Title>Simple counter</Title>
+      <Counter />
+    </Screen>
+    <Screen>
+      <Title>Counter with clock</Title>
+      <ClockCounter />
+    </Screen>
+    <Screen>
+      <Title>Drag'n'drop example</Title>
+      <Header>
+        <Ticks />
+      </Header>
+      <StreamDragDrop />
+    </Screen>
+    <Screen>
+      <Title>Redux?</Title>
+      <Code>{reduxImpl}</Code>
+    </Screen>
   </Container>
 );
 render(<App />, document.getElementById("app"));
