@@ -15,14 +15,19 @@ const Button = styled.button`
   width: 10vw;
   height: 10vh;
 `;
-const counter = startWith(
-  0,
-  scan(
-    (a: number, b: number) => a + b,
-    0,
-    merge(map(() => 1, plusClicks), map(() => -1, minusClicks))
-  )
-);
+
+// -a-a-  A
+// a => b F
+// -b-b-  map(F, A)
+const pluses = map(() => 1, plusClicks);
+const minuses = map(() => -1, minusClicks);
+
+// -a-a-----a----a---- A
+// b----b-b----b------ B
+// ba-a-b-b-a--b-a---- merge(A,B)
+const plusesAndMinuses = merge(pluses, minuses);
+const sum = (a: number, b: number) => a + b;
+const counter = startWith(0, scan(sum, 0, plusesAndMinuses));
 
 export const Counter = () => (
   <Area>
