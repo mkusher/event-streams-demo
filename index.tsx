@@ -13,11 +13,11 @@ const Header = styled.header`
   overflow: hidden;
 `;
 const Container = styled.main`
-  display: flex;
-  flex-direction: column;
   margin: 0;
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
+  width: 100vw;
+  height: 100vh;
 `;
 const Screen = styled.section`
   width: 100vw;
