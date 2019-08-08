@@ -31,6 +31,10 @@ const counterWithReset = switchLatest(map(() => counter, clock));
 export const ClockCounter = () => (
   <Area>
     <Result>
+      Default counter:{" "}
+      <FromStream stream={counter}>{result => result}</FromStream>
+    </Result>
+    <Result>
       Delayed:{" "}
       <FromStream stream={delayedCounter}>{result => result}</FromStream>
     </Result>

@@ -9,7 +9,8 @@ import {
   merge,
   periodic,
   chain,
-  scan
+  scan,
+  empty
 } from "@most/core";
 import { renderReactNodeStream, FromStream } from "./stream";
 import { createAdapter } from "@most/adapter";
@@ -59,7 +60,7 @@ const delta = (e: MouseDown) => ({
 
 const beginDrag = (e: MouseDown) => map(moveToCoords(delta(e)), mouseMoves);
 
-const endDrag = (e: MouseUp) => now(moveToCoords(delta(e))(e));
+const endDrag = (e: MouseUp) => empty();
 
 export const makeDraggable = (initialPosition: { x: number; y: number }) => {
   const drag = map(beginDrag, mouseDown);

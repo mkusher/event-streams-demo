@@ -26,7 +26,7 @@ const minuses = map(() => -1, minusClicks);
 // b----b-b----b------ B
 // ba-a-b-b-a--b-a---- merge(A,B)
 const plusesAndMinuses = merge(pluses, minuses);
-const sum = (a: number, b: number) => a + b;
+const sum = (state: number, action: number) => state + action;
 const counter = startWith(0, scan(sum, 0, plusesAndMinuses));
 
 export const Counter = () => (
