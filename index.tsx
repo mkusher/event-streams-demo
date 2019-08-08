@@ -143,6 +143,9 @@ const App = () => (
       <Counter />
     </Screen>
     <Screen>
+      <Title>Higher ordered streams?</Title>
+    </Screen>
+    <Screen>
       <Title>Counter with clock</Title>
       <ClockCounter />
     </Screen>

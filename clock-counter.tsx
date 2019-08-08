@@ -17,14 +17,6 @@ const [onMinusClick, minusClicks] = createAdapter<any>();
 
 const clock = periodic(1000);
 
-const Area = styled.section`
-  text-align: center;
-`;
-const Result = styled.h2``;
-const Button = styled.button`
-  width: 10vw;
-  height: 10vh;
-`;
 const counter = startWith(
   0,
   scan(
@@ -50,3 +42,12 @@ export const ClockCounter = () => (
     <Button onClick={onMinusClick}>-</Button>
   </Area>
 );
+
+const Area = styled.section`
+  text-align: center;
+`;
+const Result = styled.h2``;
+const Button = styled.button`
+  width: 10vw;
+  height: 10vh;
+`;
